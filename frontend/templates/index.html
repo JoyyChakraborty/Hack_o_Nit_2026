@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinSight AI — Stock Sentiment Analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/frontend/static/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/frontend/static/script.js"></script>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════ HEADER ═══════════════════════════════ -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-icon">◈</span>
+        <span class="logo-text">FinSight <span class="logo-ai">AI</span></span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html" class="nav-link active">Home</a>
+        <a href="results.html" class="nav-link">Analyze</a>
+        <a href="portfolio.html" class="nav-link">Portfolio</a>
+        <a href="compare.html" class="nav-link">Compare</a>
+      </nav>
+      <!-- Hamburger for mobile -->
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <!-- Mobile menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="index.html" class="nav-link active">Home</a>
+      <a href="results.html" class="nav-link">Analyze</a>
+      <a href="portfolio.html" class="nav-link">Portfolio</a>
+      <a href="compare.html" class="nav-link">Compare</a>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════ MAIN ════════════════════════════════ -->
+  <main class="main-content">
+
+    <!-- ── Hero Section ── -->
+    <section class="hero-section">
+      <!-- Animated background grid -->
+      <div class="hero-bg-grid"></div>
+
+      <!-- Live ticker tape strip -->
+      <div class="ticker-strip">
+        <div class="ticker-track">
+          <span class="tick up">RELIANCE ▲ 2,987.50 +1.2%</span>
+          <span class="tick down">TCS ▼ 3,421.00 −0.4%</span>
+          <span class="tick up">INFOSYS ▲ 1,452.30 +0.8%</span>
+          <span class="tick up">HDFC BANK ▲ 1,678.90 +1.5%</span>
+          <span class="tick down">WIPRO ▼ 472.10 −0.6%</span>
+          <span class="tick up">ICICI BANK ▲ 1,134.60 +0.9%</span>
+          <span class="tick down">BAJAJ FIN ▼ 6,890.00 −0.3%</span>
+          <span class="tick up">SENSEX ▲ 74,250 +0.7%</span>
+          <span class="tick up">NIFTY 50 ▲ 22,560 +0.6%</span>
+          <!-- Duplicate for seamless loop -->
+          <span class="tick up">RELIANCE ▲ 2,987.50 +1.2%</span>
+          <span class="tick down">TCS ▼ 3,421.00 −0.4%</span>
+          <span class="tick up">INFOSYS ▲ 1,452.30 +0.8%</span>
+          <span class="tick up">HDFC BANK ▲ 1,678.90 +1.5%</span>
+          <span class="tick down">WIPRO ▼ 472.10 −0.6%</span>
+          <span class="tick up">ICICI BANK ▲ 1,134.60 +0.9%</span>
+          <span class="tick down">BAJAJ FIN ▼ 6,890.00 −0.3%</span>
+          <span class="tick up">SENSEX ▲ 74,250 +0.7%</span>
+          <span class="tick up">NIFTY 50 ▲ 22,560 +0.6%</span>
+        </div>
+      </div>
+
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="badge-dot pulse"></span>
+          AI Engine Online · NSE/BSE · Live
+        </div>
+        <h1 class="hero-title">
+          AI-Powered <br />
+          <span class="gradient-text">Stock Sentiment</span><br />
+          Analysis
+        </h1>
+        <p class="hero-subtitle">
+          Harness deep-learning NLP to decode market sentiment from thousands of
+          financial news sources in real-time. Make smarter trades with data, not noise.
+        </p>
+        <div class="hero-cta">
+          <a href="results.html" class="btn btn-primary">
+            <span>Start Analyzing</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="compare.html" class="btn btn-ghost">Compare Stocks</a>
+        </div>
+        <!-- Stat strip -->
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-num">50K+</span>
+            <span class="stat-label">News Sources</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-num">99.2%</span>
+            <span class="stat-label">Accuracy</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-num">&lt;0.3s</span>
+            <span class="stat-label">Response Time</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-num">5000+</span>
+            <span class="stat-label">Stocks Covered</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Feature Cards ── -->
+    <section class="features-section">
+      <div class="section-header">
+        <span class="section-tag">CORE MODULES</span>
+        <h2 class="section-title">Everything you need to <span class="gradient-text">trade smarter</span></h2>
+      </div>
+
+      <div class="cards-grid">
+
+        <!-- Card 1 -->
+        <div class="feature-card" data-glow="green">
+          <div class="card-accent-line green"></div>
+          <div class="card-icon green-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 8v4l3 3"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">Analyze Single Stock</h3>
+            <p class="card-desc">
+              Deep-dive into any stock's news sentiment. Get a real-time score from 0–100
+              with a detailed AI summary of market perception.
+            </p>
+            <ul class="card-features">
+              <li>✦ Real-time NLP scoring</li>
+              <li>✦ Positive / Negative / Neutral</li>
+              <li>✦ Visual donut breakdown</li>
+            </ul>
+          </div>
+          <a href="results.html" class="btn btn-card green-btn">Analyze Now →</a>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="feature-card featured" data-glow="gold">
+          <div class="card-accent-line gold"></div>
+          <div class="featured-badge">POPULAR</div>
+          <div class="card-icon gold-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M3 3h18v18H3z"/>
+              <path d="M3 9h18M9 21V9"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">Portfolio Risk Analyzer</h3>
+            <p class="card-desc">
+              Evaluate sentiment risk across your entire portfolio. Our AI aggregates
+              signals and returns a composite risk score with a gauge visualization.
+            </p>
+            <ul class="card-features">
+              <li>✦ Multi-stock aggregation</li>
+              <li>✦ Gauge risk dashboard</li>
+              <li>✦ Low / Medium / High labels</li>
+            </ul>
+          </div>
+          <a href="portfolio.html" class="btn btn-card gold-btn">Check Portfolio →</a>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="feature-card" data-glow="blue">
+          <div class="card-accent-line blue"></div>
+          <div class="card-icon blue-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M18 20V10M12 20V4M6 20v-6"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">Compare Companies</h3>
+            <p class="card-desc">
+              Head-to-head sentiment battle between two stocks. Visual bar chart
+              comparison reveals which company holds stronger market confidence.
+            </p>
+            <ul class="card-features">
+              <li>✦ Side-by-side scores</li>
+              <li>✦ Bar chart visualization</li>
+              <li>✦ Winner declaration</li>
+            </ul>
+          </div>
+          <a href="compare.html" class="btn btn-card blue-btn">Compare Now →</a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── How It Works ── -->
+    <section class="how-section">
+      <div class="section-header">
+        <span class="section-tag">HOW IT WORKS</span>
+        <h2 class="section-title">From news to <span class="gradient-text">insight in seconds</span></h2>
+      </div>
+      <div class="steps-row">
+        <div class="step-item">
+          <div class="step-num">01</div>
+          <h4>Enter Stock</h4>
+          <p>Type any listed company name or ticker symbol</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-item">
+          <div class="step-num">02</div>
+          <h4>AI Scans News</h4>
+          <p>Our NLP engine processes thousands of articles</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-item">
+          <div class="step-num">03</div>
+          <h4>Score Generated</h4>
+          <p>Sentiment score 0–100 is computed instantly</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-item">
+          <div class="step-num">04</div>
+          <h4>Act With Clarity</h4>
+          <p>Make informed decisions backed by data</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <a href="index.html" class="nav-logo footer-logo">
+          <span class="logo-icon">◈</span>
+          <span class="logo-text">FinSight <span class="logo-ai">AI</span></span>
+        </a>
+        <p class="footer-tagline">Intelligence at the speed of markets.</p>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="results.html">Analyze</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="compare.html">Compare</a>
+      </div>
+      <div class="footer-right">
+        <p class="footer-copy">Built for Hackathon | FinSight AI &copy; 2025</p>
+        <p class="footer-disclaimer">For educational purposes only. Not financial advice.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

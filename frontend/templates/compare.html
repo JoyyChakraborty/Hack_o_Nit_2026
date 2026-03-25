@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compare Stocks — FinSight AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/frontend/static/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/frontend/static/script.js"></script>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════ HEADER ═══════════════════════════════ -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-icon">◈</span>
+        <span class="logo-text">FinSight <span class="logo-ai">AI</span></span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="results.html" class="nav-link">Analyze</a>
+        <a href="portfolio.html" class="nav-link">Portfolio</a>
+        <a href="compare.html" class="nav-link active">Compare</a>
+      </nav>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="results.html" class="nav-link">Analyze</a>
+      <a href="portfolio.html" class="nav-link">Portfolio</a>
+      <a href="compare.html" class="nav-link active">Compare</a>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════ MAIN ════════════════════════════════ -->
+  <main class="main-content page-content">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-header-inner">
+        <div class="breadcrumb">
+          <a href="index.html">Home</a>
+          <span>/</span>
+          <span>Compare</span>
+        </div>
+        <h1 class="page-title">
+          <span class="title-icon blue-icon-sm">◑</span>
+          Company Comparison
+        </h1>
+        <p class="page-subtitle">
+          Head-to-head AI sentiment battle. Find out which company commands stronger market confidence.
+        </p>
+      </div>
+    </div>
+
+    <!-- Compare Input Block -->
+    <div class="search-block">
+      <div class="search-card compare-card">
+        <div class="compare-inputs-row">
+          <!-- Company 1 -->
+          <div class="compare-input-group">
+            <label class="input-label">
+              <span class="label-badge blue-badge">Company 1</span>
+            </label>
+            <div class="input-wrapper">
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              </span>
+              <input
+                type="text"
+                id="company1Input"
+                class="text-input"
+                placeholder="e.g. TCS"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+
+          <!-- VS divider -->
+          <div class="vs-divider">
+            <div class="vs-line"></div>
+            <span class="vs-text">VS</span>
+            <div class="vs-line"></div>
+          </div>
+
+          <!-- Company 2 -->
+          <div class="compare-input-group">
+            <label class="input-label">
+              <span class="label-badge green-badge">Company 2</span>
+            </label>
+            <div class="input-wrapper">
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              </span>
+              <input
+                type="text"
+                id="company2Input"
+                class="text-input"
+                placeholder="e.g. Infosys"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="compare-btn-row">
+          <button class="btn btn-primary btn-wide" id="compareBtn" onclick="compareCompanies()">
+            <span id="compareBtnText">Compare Now</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+
+        <!-- Quick compare presets -->
+        <div class="quick-picks">
+          <span class="quick-label">Quick compare:</span>
+          <button class="quick-chip" onclick="quickCompare('TCS','Infosys')">TCS vs Infosys</button>
+          <button class="quick-chip" onclick="quickCompare('Reliance','ONGC')">Reliance vs ONGC</button>
+          <button class="quick-chip" onclick="quickCompare('HDFC Bank','ICICI Bank')">HDFC vs ICICI</button>
+          <button class="quick-chip" onclick="quickCompare('Wipro','HCL Tech')">Wipro vs HCL</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="loading-overlay" id="loadingSpinner" style="display:none;">
+      <div class="spinner-container">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring inner"></div>
+        <div class="spinner-dot"></div>
+        <p class="spinner-text">Running comparison analysis…</p>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div class="error-banner" id="errorBanner" style="display:none;">
+      <span class="error-icon">⚠</span>
+      <span id="errorText">Something went wrong. Please try again.</span>
+      <button onclick="dismissError()" class="error-dismiss">✕</button>
+    </div>
+
+    <!-- Results Section -->
+    <div class="results-section" id="compareResults" style="display:none;">
+
+      <!-- Winner Banner -->
+      <div class="winner-banner" id="winnerBanner">
+        <div class="winner-crown">👑</div>
+        <div class="winner-text">
+          <span class="winner-label">WINNER</span>
+          <span class="winner-name" id="winnerName">—</span>
+        </div>
+        <div class="winner-margin" id="winnerMargin">—</div>
+      </div>
+
+      <!-- Score Cards Row -->
+      <div class="compare-score-cards" id="compareScoreCards">
+        <!-- Card 1 -->
+        <div class="compare-score-card" id="scoreCard1">
+          <div class="csc-header blue-header">
+            <span class="csc-label">Company 1</span>
+            <span class="csc-name" id="cscName1">—</span>
+          </div>
+          <div class="csc-score" id="cscScore1">—</div>
+          <div class="csc-sentiment" id="cscSentiment1">—</div>
+          <div class="csc-bar-wrap">
+            <div class="csc-bar blue-bar" id="cscBar1"></div>
+          </div>
+          <p class="csc-summary" id="cscSummary1">—</p>
+        </div>
+
+        <!-- VS center -->
+        <div class="compare-vs-center">
+          <div class="cvs-ring">VS</div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="compare-score-card" id="scoreCard2">
+          <div class="csc-header green-header">
+            <span class="csc-label">Company 2</span>
+            <span class="csc-name" id="cscName2">—</span>
+          </div>
+          <div class="csc-score" id="cscScore2">—</div>
+          <div class="csc-sentiment" id="cscSentiment2">—</div>
+          <div class="csc-bar-wrap">
+            <div class="csc-bar green-bar" id="cscBar2"></div>
+          </div>
+          <p class="csc-summary" id="cscSummary2">—</p>
+        </div>
+      </div>
+
+      <!-- Bar Chart -->
+      <div class="result-card bar-chart-card">
+        <h3 class="chart-card-title">Sentiment Score Comparison</h3>
+        <div class="bar-chart-wrap">
+          <canvas id="barChart"></canvas>
+        </div>
+        <!-- Metrics table -->
+        <div class="compare-metrics-table" id="compareMetricsTable">
+          <div class="metrics-row header-row">
+            <span>Metric</span>
+            <span id="metricsHeader1">Company 1</span>
+            <span id="metricsHeader2">Company 2</span>
+          </div>
+          <div class="metrics-row">
+            <span>Sentiment Score</span>
+            <span class="metric-val" id="metricScore1">—</span>
+            <span class="metric-val" id="metricScore2">—</span>
+          </div>
+          <div class="metrics-row">
+            <span>Sentiment Type</span>
+            <span class="metric-val" id="metricSentiment1">—</span>
+            <span class="metric-val" id="metricSentiment2">—</span>
+          </div>
+          <div class="metrics-row">
+            <span>Confidence</span>
+            <span class="metric-val" id="metricConf1">—</span>
+            <span class="metric-val" id="metricConf2">—</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Placeholder -->
+    <div class="placeholder-state" id="placeholderState">
+      <div class="placeholder-icon">◑</div>
+      <h3>Ready to Compare</h3>
+      <p>Enter two company names above and click Compare Now to begin the AI duel.</p>
+    </div>
+
+  </main>
+
+  <!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <a href="index.html" class="nav-logo footer-logo">
+          <span class="logo-icon">◈</span>
+          <span class="logo-text">FinSight <span class="logo-ai">AI</span></span>
+        </a>
+        <p class="footer-tagline">Intelligence at the speed of markets.</p>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="results.html">Analyze</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="compare.html">Compare</a>
+      </div>
+      <div class="footer-right">
+        <p class="footer-copy">Built for Hackathon | FinSight AI &copy; 2025</p>
+        <p class="footer-disclaimer">For educational purposes only. Not financial advice.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
