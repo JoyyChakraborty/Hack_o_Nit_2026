@@ -1,213 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>Portfolio Risk — FinSight AI</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/frontend/static/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="/frontend/static/script.js"></script>
+  <style>
+    .portfolio-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
+    .input-section { background: #1c2230; padding: 25px; border-radius: 12px; }
+    .stock-input-row { display: flex; gap: 10px; margin-bottom: 10px; }
+    .stock-input-row .text-input { flex: 1; }
+    .stock-remove-btn { background: #ff5252; color: white; border: none; border-radius: 8px; width: 40px; cursor: pointer; font-weight: bold; }
+    .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+    .preset-row { margin-top: 15px; padding-top: 15px; border-top: 1px solid #30363d; }
+    
+    .results-section { background: #1c2230; padding: 25px; border-radius: 12px; display: none; text-align: center; }
+    .gauge-wrap { width: 100%; max-width: 300px; margin: 0 auto; position: relative; }
+    .gauge-score { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 2.5rem; font-weight: bold; }
+    .breakdown-list { margin-top: 20px; text-align: left; }
+    
+    @media (max-width: 768px) { .portfolio-container { grid-template-columns: 1fr; } }
+  </style>
 </head>
 <body>
 
-  <!-- ═══════════════════════════════ HEADER ═══════════════════════════════ -->
   <header class="navbar">
     <div class="nav-container">
-      <a href="index.html" class="nav-logo">
-        <span class="logo-icon">◈</span>
-        <span class="logo-text">FinSight <span class="logo-ai">AI</span></span>
-      </a>
+      <a href="/" class="nav-logo">FinSight <span class="logo-ai">AI</span></a>
       <nav class="nav-links">
-        <a href="index.html" class="nav-link">Home</a>
-        <a href="results.html" class="nav-link">Analyze</a>
-        <a href="portfolio.html" class="nav-link active">Portfolio</a>
-        <a href="compare.html" class="nav-link">Compare</a>
+        <a href="/" class="nav-link">Home</a>
+        <a href="/results" class="nav-link">Analyze</a>
+        <a href="/portfolio" class="nav-link active">Portfolio</a>
+        <a href="/compare" class="nav-link">Compare</a>
       </nav>
-      <button class="hamburger" id="hamburger" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-    <div class="mobile-menu" id="mobileMenu">
-      <a href="index.html" class="nav-link">Home</a>
-      <a href="results.html" class="nav-link">Analyze</a>
-      <a href="portfolio.html" class="nav-link active">Portfolio</a>
-      <a href="compare.html" class="nav-link">Compare</a>
     </div>
   </header>
 
-  <!-- ═══════════════════════════════ MAIN ════════════════════════════════ -->
   <main class="main-content page-content">
-
-    <!-- Page Header -->
     <div class="page-header">
-      <div class="page-header-inner">
-        <div class="breadcrumb">
-          <a href="index.html">Home</a>
-          <span>/</span>
-          <span>Portfolio</span>
-        </div>
-        <h1 class="page-title">
-          <span class="title-icon gold-icon-sm">◈</span>
-          Portfolio Risk Analyzer
-        </h1>
-        <p class="page-subtitle">
-          Add your holdings and get an AI-computed aggregate sentiment risk score for your portfolio.
-        </p>
-      </div>
+      <h1 class="page-title">Portfolio Risk Assessment</h1>
+      <p class="page-subtitle">Analyze multiple stocks at once to determine the overall sentiment health of your portfolio.</p>
     </div>
 
-    <!-- Portfolio Input Block -->
-    <div class="search-block">
-      <div class="search-card portfolio-card">
-        <div class="portfolio-input-header">
-          <h3 class="input-label">Your Holdings</h3>
-          <button class="btn btn-ghost btn-sm" onclick="clearAllStocks()">Clear All</button>
+    <div class="portfolio-container">
+      
+      <div class="input-section">
+        <h3>Your Holdings</h3>
+        <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 15px;">Add up to 5 stocks to analyze.</p>
+        
+        <div id="stocksInputList">
+          </div>
+
+        <div class="btn-row">
+          <button class="btn" style="background: #30363d;" onclick="addStockInput()">+ Add Stock</button>
+          <button class="btn btn-primary" onclick="analyzePortfolio()">Analyze Portfolio</button>
         </div>
 
-        <!-- Dynamic stock inputs -->
-        <div class="stocks-input-list" id="stocksInputList">
-          <!-- Stock inputs injected by JS -->
-        </div>
-
-        <div class="portfolio-actions">
-          <button class="btn btn-ghost" id="addStockBtn" onclick="addStockInput()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
-            Add Another Stock
-          </button>
-          <button class="btn btn-primary" id="calculateBtn" onclick="analyzePortfolio()">
-            <span id="calcBtnText">Calculate Risk</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </button>
-        </div>
-
-        <!-- Preset portfolios -->
-        <div class="quick-picks">
-          <span class="quick-label">Load preset:</span>
-          <button class="quick-chip" onclick="loadPreset('nifty50')">Nifty 50 Top</button>
-          <button class="quick-chip" onclick="loadPreset('it')">IT Sector</button>
+        <div class="preset-row">
+          <span style="color: #888; font-size: 0.9rem; margin-right: 10px;">Quick Presets:</span>
+          <button class="quick-chip" onclick="loadPreset('it')">Tech</button>
           <button class="quick-chip" onclick="loadPreset('banking')">Banking</button>
-          <button class="quick-chip" onclick="loadPreset('fmcg')">FMCG</button>
+          <button class="quick-chip" onclick="clearAllStocks()">Clear</button>
         </div>
       </div>
-    </div>
 
-    <!-- Loading Spinner -->
-    <div class="loading-overlay" id="loadingSpinner" style="display:none;">
-      <div class="spinner-container">
-        <div class="spinner-ring"></div>
-        <div class="spinner-ring inner"></div>
-        <div class="spinner-dot"></div>
-        <p class="spinner-text">Analyzing portfolio risk…</p>
-      </div>
-    </div>
-
-    <!-- Error Message -->
-    <div class="error-banner" id="errorBanner" style="display:none;">
-      <span class="error-icon">⚠</span>
-      <span id="errorText">Something went wrong. Please try again.</span>
-      <button onclick="dismissError()" class="error-dismiss">✕</button>
-    </div>
-
-    <!-- Results Section -->
-    <div class="results-section" id="portfolioResults" style="display:none;">
-      <div class="results-header">
-        <h2 class="results-title">
-          Portfolio Risk Report
-          <span class="risk-badge" id="riskBadge">—</span>
-        </h2>
-        <span class="results-timestamp" id="portfolioTimestamp"></span>
-      </div>
-
-      <div class="results-grid portfolio-grid">
-
-        <!-- Left: Risk Gauge -->
-        <div class="result-card gauge-card">
-          <h3 class="chart-card-title">Risk Gauge</h3>
-          <div class="gauge-wrap">
-            <canvas id="gaugeChart" width="380" height="220"></canvas>
-            <div class="gauge-labels">
-              <span class="gauge-label-low">LOW</span>
-              <span class="gauge-label-mid">MEDIUM</span>
-              <span class="gauge-label-high">HIGH</span>
-            </div>
-          </div>
-          <div class="risk-score-display">
-            <div class="risk-score-number" id="riskScoreNumber">—</div>
-            <div class="risk-score-label" id="riskScoreLabel">—</div>
-            <p class="risk-score-desc" id="riskScoreDesc">—</p>
-          </div>
+      <div>
+        <div class="loading-overlay" id="loadingSpinner" style="display:none; text-align: center; padding: 50px; background: #1c2230; border-radius: 12px;">
+          <p class="spinner-text" style="color: #00c853; font-size: 1.2rem;">AI is analyzing portfolio risk...</p>
+          <p style="color: #888; font-size: 0.9rem; margin-top: 10px;">(This takes about 5-10 seconds to read news for all stocks)</p>
         </div>
 
-        <!-- Right: Individual Stock Scores -->
-        <div class="result-card stocks-breakdown-card">
-          <h3 class="chart-card-title">Stock Breakdown</h3>
-          <div class="breakdown-list" id="breakdownList">
-            <!-- Injected by JS -->
+        <div id="portfolioResults" class="results-section">
+          <h3>Overall Portfolio Health: <span id="riskScoreLabel" style="color: #00c853;">Healthy</span></h3>
+          
+          <div class="gauge-wrap" style="margin-top: 20px;">
+            <canvas id="gaugeChart"></canvas>
+            <div class="gauge-score"><span id="riskScoreNumber">0</span></div>
           </div>
-          <div class="breakdown-summary">
-            <div class="breakdown-stat">
-              <span class="bstat-label">Avg Score</span>
-              <span class="bstat-val green" id="avgScore">—</span>
-            </div>
-            <div class="breakdown-stat">
-              <span class="bstat-label">Riskiest Stock</span>
-              <span class="bstat-val red" id="riskiestStock">—</span>
-            </div>
-            <div class="breakdown-stat">
-              <span class="bstat-label">Safest Stock</span>
-              <span class="bstat-val green" id="safestStock">—</span>
-            </div>
-          </div>
-        </div>
 
-      </div>
-
-      <!-- AI Recommendation -->
-      <div class="recommendation-card" id="recommendationCard">
-        <div class="rec-icon">◎</div>
-        <div class="rec-content">
-          <h4>AI Recommendation</h4>
-          <p id="recommendationText">—</p>
+          <h4 style="margin-top: 30px; text-align: left; border-bottom: 1px solid #30363d; padding-bottom: 10px;">Asset Breakdown</h4>
+          <div id="breakdownList" class="breakdown-list">
+            </div>
         </div>
       </div>
 
     </div>
-
-    <!-- Placeholder -->
-    <div class="placeholder-state" id="placeholderState">
-      <div class="placeholder-icon">◈</div>
-      <h3>Portfolio Empty</h3>
-      <p>Add your stock holdings above and click Calculate Risk to get started.</p>
-    </div>
-
   </main>
 
-  <!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
-  <footer class="footer">
-    <div class="footer-inner">
-      <div class="footer-left">
-        <a href="index.html" class="nav-logo footer-logo">
-          <span class="logo-icon">◈</span>
-          <span class="logo-text">FinSight <span class="logo-ai">AI</span></span>
-        </a>
-        <p class="footer-tagline">Intelligence at the speed of markets.</p>
-      </div>
-      <div class="footer-links">
-        <a href="index.html">Home</a>
-        <a href="results.html">Analyze</a>
-        <a href="portfolio.html">Portfolio</a>
-        <a href="compare.html">Compare</a>
-      </div>
-      <div class="footer-right">
-        <p class="footer-copy">Built for Hackathon | FinSight AI &copy; 2025</p>
-        <p class="footer-disclaimer">For educational purposes only. Not financial advice.</p>
-      </div>
-    </div>
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="script.js"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

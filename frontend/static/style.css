@@ -39,7 +39,7 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background: var(--bg);
+  background-color: var(--bg); /* Add this explicitly */
   color: var(--text);
   font-family: 'Poppins', sans-serif;
   font-size: 15px;
@@ -47,7 +47,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  /* Subtle dot-grid background pattern */
+  /* Use fixed color first, then the pattern */
   background-image: radial-gradient(circle, #30363d 1px, transparent 1px);
   background-size: 32px 32px;
   background-attachment: fixed;

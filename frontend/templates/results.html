@@ -6,45 +6,35 @@
   <title>Analyze Stock — FinSight AI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/frontend/static/style.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="/frontend/static/script.js"></script>
 </head>
 <body>
 
-  <!-- ═══════════════════════════════ HEADER ═══════════════════════════════ -->
   <header class="navbar">
     <div class="nav-container">
-      <a href="index.html" class="nav-logo">
+      <a href="/" class="nav-logo">
         <span class="logo-icon">◈</span>
         <span class="logo-text">FinSight <span class="logo-ai">AI</span></span>
       </a>
       <nav class="nav-links">
-        <a href="index.html" class="nav-link">Home</a>
-        <a href="results.html" class="nav-link active">Analyze</a>
-        <a href="portfolio.html" class="nav-link">Portfolio</a>
-        <a href="compare.html" class="nav-link">Compare</a>
+        <a href="/" class="nav-link">Home</a>
+        <a href="/results" class="nav-link active">Analyze</a>
+        <a href="/portfolio" class="nav-link">Portfolio</a>
+        <a href="/compare" class="nav-link">Compare</a>
       </nav>
       <button class="hamburger" id="hamburger" aria-label="Menu">
         <span></span><span></span><span></span>
       </button>
     </div>
-    <div class="mobile-menu" id="mobileMenu">
-      <a href="index.html" class="nav-link">Home</a>
-      <a href="results.html" class="nav-link active">Analyze</a>
-      <a href="portfolio.html" class="nav-link">Portfolio</a>
-      <a href="compare.html" class="nav-link">Compare</a>
-    </div>
   </header>
 
-  <!-- ═══════════════════════════════ MAIN ════════════════════════════════ -->
   <main class="main-content page-content">
 
-    <!-- Page Header -->
     <div class="page-header">
       <div class="page-header-inner">
         <div class="breadcrumb">
-          <a href="index.html">Home</a>
+          <a href="/">Home</a>
           <span>/</span>
           <span>Analyze</span>
         </div>
@@ -58,7 +48,6 @@
       </div>
     </div>
 
-    <!-- Search Block -->
     <div class="search-block">
       <div class="search-card">
         <label class="input-label">Company Name or Ticker</label>
@@ -72,6 +61,7 @@
               id="companyInput"
               class="text-input"
               placeholder="e.g. Reliance, TCS, HDFC Bank..."
+              onkeydown="if(event.key==='Enter') analyzeSingleStock()"
               autocomplete="off"
             />
           </div>
@@ -80,36 +70,23 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </button>
         </div>
-        <!-- Quick suggestions -->
         <div class="quick-picks">
           <span class="quick-label">Quick picks:</span>
           <button class="quick-chip" onclick="quickPick('Reliance')">Reliance</button>
           <button class="quick-chip" onclick="quickPick('TCS')">TCS</button>
           <button class="quick-chip" onclick="quickPick('Infosys')">Infosys</button>
-          <button class="quick-chip" onclick="quickPick('HDFC Bank')">HDFC Bank</button>
-          <button class="quick-chip" onclick="quickPick('Wipro')">Wipro</button>
+          <button class="quick-chip" onclick="quickPick('Nvidia')">Nvidia</button>
         </div>
       </div>
     </div>
 
-    <!-- Loading Spinner -->
     <div class="loading-overlay" id="loadingSpinner" style="display:none;">
       <div class="spinner-container">
         <div class="spinner-ring"></div>
-        <div class="spinner-ring inner"></div>
-        <div class="spinner-dot"></div>
-        <p class="spinner-text">Scanning market news…</p>
+        <p class="spinner-text">Gemini is scanning market news…</p>
       </div>
     </div>
 
-    <!-- Error Message -->
-    <div class="error-banner" id="errorBanner" style="display:none;">
-      <span class="error-icon">⚠</span>
-      <span id="errorText">Something went wrong. Please try again.</span>
-      <button onclick="dismissError()" class="error-dismiss">✕</button>
-    </div>
-
-    <!-- Results Section -->
     <div class="results-section" id="resultsSection" style="display:none;">
       <div class="results-header">
         <h2 class="results-title">
@@ -119,8 +96,6 @@
       </div>
 
       <div class="results-grid">
-
-        <!-- Left: Sentiment Card -->
         <div class="result-card sentiment-card">
           <div class="card-top-bar" id="sentimentBar"></div>
           <div class="sentiment-label-row">
@@ -140,18 +115,8 @@
               </div>
             </div>
             <div class="score-meta">
-              <div class="meta-row">
-                <span class="meta-key">Sentiment</span>
-                <span class="meta-val" id="metaSentiment">—</span>
-              </div>
-              <div class="meta-row">
-                <span class="meta-key">Confidence</span>
-                <span class="meta-val" id="metaConfidence">—</span>
-              </div>
-              <div class="meta-row">
-                <span class="meta-key">News Volume</span>
-                <span class="meta-val" id="metaVolume">—</span>
-              </div>
+              <div class="meta-row"><span class="meta-key">Confidence</span><span class="meta-val" id="metaConfidence">—</span></div>
+              <div class="meta-row"><span class="meta-key">Volume</span><span class="meta-val" id="metaVolume">—</span></div>
             </div>
           </div>
           <div class="summary-block">
@@ -160,77 +125,39 @@
           </div>
         </div>
 
-        <!-- Right: Donut Chart -->
         <div class="result-card chart-card">
           <h3 class="chart-card-title">Sentiment Distribution</h3>
           <div class="donut-wrap">
             <canvas id="donutChart"></canvas>
-            <div class="donut-center-label">
-              <span id="donutCenterVal">—</span>
-              <span class="donut-center-sub">Score</span>
-            </div>
           </div>
           <div class="chart-legend" id="chartLegend">
-            <div class="legend-item">
-              <span class="legend-dot" style="background:var(--green)"></span>
-              <span>Positive</span>
-              <span class="legend-val" id="lgPositive">—</span>
-            </div>
-            <div class="legend-item">
-              <span class="legend-dot" style="background:var(--red)"></span>
-              <span>Negative</span>
-              <span class="legend-val" id="lgNegative">—</span>
-            </div>
-            <div class="legend-item">
-              <span class="legend-dot" style="background:var(--border)"></span>
-              <span>Neutral</span>
-              <span class="legend-val" id="lgNeutral">—</span>
-            </div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--green)"></span><span>Positive</span><span class="legend-val" id="lgPositive">—</span></div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--red)"></span><span>Negative</span><span class="legend-val" id="lgNegative">—</span></div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--border)"></span><span>Neutral</span><span class="legend-val" id="lgNeutral">—</span></div>
           </div>
-          <!-- Key Signals -->
-          <div class="signals-block" id="signalsBlock">
+          <div class="signals-block">
             <h4 class="signals-title">Key Signals</h4>
             <div class="signals-list" id="signalsList"></div>
           </div>
         </div>
-
       </div>
     </div>
 
-    <!-- Placeholder when no analysis has been run -->
     <div class="placeholder-state" id="placeholderState">
       <div class="placeholder-icon">◎</div>
       <h3>Ready to Analyze</h3>
-      <p>Enter a company name above and click Analyze to see real-time sentiment data.</p>
+      <p>Search for a company above to see AI-powered sentiment analysis.</p>
     </div>
 
   </main>
 
-  <!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
   <footer class="footer">
     <div class="footer-inner">
-      <div class="footer-left">
-        <a href="index.html" class="nav-logo footer-logo">
-          <span class="logo-icon">◈</span>
-          <span class="logo-text">FinSight <span class="logo-ai">AI</span></span>
-        </a>
-        <p class="footer-tagline">Intelligence at the speed of markets.</p>
-      </div>
-      <div class="footer-links">
-        <a href="index.html">Home</a>
-        <a href="results.html">Analyze</a>
-        <a href="portfolio.html">Portfolio</a>
-        <a href="compare.html">Compare</a>
-      </div>
-      <div class="footer-right">
-        <p class="footer-copy">Built for Hackathon | FinSight AI &copy; 2025</p>
-        <p class="footer-disclaimer">For educational purposes only. Not financial advice.</p>
-      </div>
+      <p class="footer-copy">Built for Hack-O-NiT 2026 | FinSight AI</p>
     </div>
   </footer>
 
-  <!-- Chart.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
